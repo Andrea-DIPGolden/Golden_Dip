@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descuento Aleatorio - Golden Dip</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+
+        img#logo {
+            width: 150px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #ff9900;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #ff6600;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 8px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #ff6600;
+        }
+
+        #sorteo {
+            display: none;
+            margin-top: 30px;
+            background-color: #ffdb58;
+            padding: 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #800000;
+            text-align: center;
+        }
+
+        #descuentoSeleccionado {
+            font-size: 24px;
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #codigoDeBarras {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #instrucciones {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #333;
+            text-align: left;
+            margin-left: 20px;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.pinimg.com/736x/f8/31/e5/f831e52262985f808adb57ff6d1366ed.jpg" alt="Golden Dip Logo" id="logo">
+        <h1>GOLDEN DIP</h1>
+        <h2>¡Registra tus Códigos y Obtén un Descuento!</h2>
+
+        <div class="form-container" id="formulario">
+            <p>Ingresa los 5 códigos únicos para desbloquear el sorteo:</p>
+            <input type="text" id="codigo1" placeholder="Código 1">
+            <input type="text" id="codigo2" placeholder="Código 2">
+            <input type="text" id="codigo3" placeholder="Código 3">
+            <input type="text" id="codigo4" placeholder="Código 4">
+            <input type="text" id="codigo5" placeholder="Código 5">
+            <button id="verificarBtn">Verificar Códigos</button>
+        </div>
+
+        <div id="sorteo">
+            <p>¡Has desbloqueado el sorteo! Haz clic para obtener tu descuento:</p>
+            <button id="sortearBtn">Sortea tu Descuento</button>
+            <p id="descuentoSeleccionado"></p>
+
+            <div id="codigoDeBarras" style="display: none;">
+                <svg id="barcode"></svg>
+            </div>
+
+            <div id="instrucciones" style="display: none;">
+                <p><strong>Instrucciones para canjear:</strong></p>
+                <p>1. Dirígete a nuestra tienda física o en línea.</p>
+                <p>2. Presenta este código de barras junto a tus envases vacios para obtener tu descuento en el producto Golden Dip.</p>
+                <p>3. Solo es válido por una compra del producto Golden Dip.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const codigosValidos = ["X4D9F8A2", "P3S1R8B7", "B0T2H7Y5", "M6P3T0F4", "T4P3Q9R0"];
+        const premios = [
+            { texto: "5% de descuento", probabilidad: 20 },
+            { texto: "10% de descuento", probabilidad: 20 },
+            { texto: "15% de descuento", probabilidad: 20 },
+            { texto: "20% de descuento", probabilidad: 15 },
+            { texto: "25% de descuento", probabilidad: 10 },
+            { texto: "30% de descuento", probabilidad: 10 },
+            { texto: "¡GRATIS!", probabilidad: 5 }
+        ];
+
+        const verificarBtn = document.getElementById("verificarBtn");
+        const sortearBtn = document.getElementById("sortearBtn");
+        const formulario = document.getElementById("formulario");
+        const sorteo = document.getElementById("sorteo");
+        const descuentoSeleccionado = document.getElementById("descuentoSeleccionado");
+        const codigoDeBarras = document.getElementById("codigoDeBarras");
+        const instrucciones = document.getElementById("instrucciones");
+
+        verificarBtn.addEventListener("click", () => {
+            const codigosIngresados = [
+                document.getElementById("codigo1").value,
+                document.getElementById("codigo2").value,
+                document.getElementById("codigo3").value,
+                document.getElementById("codigo4").value,
+                document.getElementById("codigo5").value
+            ];
+
+            if (codigosIngresados.every(codigo => codigosValidos.includes(codigo))) {
+                formulario.style.display = "none";
+                sorteo.style.display = "block";
+            } else {
+                alert("Uno o más códigos son incorrectos. Inténtalo de nuevo.");
+            }
+        });
+
+        sortearBtn.addEventListener("click", () => {
+            let totalProbabilidad = 0;
+            const numeroAleatorio = Math.random() * 100;
+
+            for (let premio of premios) {
+                totalProbabilidad += premio.probabilidad;
+                if (numeroAleatorio <= totalProbabilidad) {
+                    descuentoSeleccionado.innerText = `¡Tu descuento es: ${premio.texto}!`;
+                    JsBarcode("#barcode", premio.texto, { format: "CODE128" });
+                    codigoDeBarras.style.display = "block";
+                    instrucciones.style.display = "block";
+                    break;
+                }
+            }
+
+            sortearBtn.disabled = true; // Solo permite un sorteo
+        });
+    </script>
+</body>
+</html>
